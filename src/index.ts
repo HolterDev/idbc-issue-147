@@ -15,30 +15,39 @@ const idbPConnectionPool = new DBPool(
 );
 
 const Functions = {
-  runSelectStatementViaExecApi() {
-    const idbConnection = new dbconn();
-    idbConnection.conn("*LOCAL");
-    const idbStatement = new dbstmt(idbConnection);
-    idbStatement.exec("select companyId, clientId from tissue147", (x: any) => {
-      console.log("statement executed");
-      console.log(JSON.stringify(x));
-      idbStatement.close();
-      idbConnection.disconn();
-      idbConnection.close();
-    });
-  },
-
-  runSelectStatementViaFetchApi() {
-    const idbConnection = new dbconn();
-    idbConnection.conn("*LOCAL");
-    const idbStatement = new dbstmt(idbConnection);
-
-    idbStatement.prepare("select companyId, clientId from tissue147", () => {
-      idbStatement.execute(() => {
-        idbStatement.fetchAll((x: any) => {
+  async runSelectStatementViaExecApi() {
+    return new Promise<void>(async (resolve) => {
+      const idbConnection = new dbconn();
+      idbConnection.conn("*LOCAL");
+      const idbStatement = new dbstmt(idbConnection);
+      idbStatement.exec(
+        "select companyId, clientId from tissue147",
+        (x: any) => {
           console.log("statement executed");
           console.log(JSON.stringify(x));
           idbStatement.close();
+          idbConnection.disconn();
+          idbConnection.close();
+          resolve();
+        }
+      );
+    });
+  },
+
+  async runSelectStatementViaFetchApi() {
+    return new Promise<void>(async (resolve) => {
+      const idbConnection = new dbconn();
+      idbConnection.conn("*LOCAL");
+      const idbStatement = new dbstmt(idbConnection);
+
+      idbStatement.prepare("select companyId, clientId from tissue147", () => {
+        idbStatement.execute(() => {
+          idbStatement.fetchAll((x: any) => {
+            console.log("statement executed");
+            console.log(JSON.stringify(x));
+            idbStatement.close();
+            resolve();
+          });
         });
       });
     });
@@ -87,9 +96,22 @@ const Functions = {
         console.log(reason);
       });
   },
+
+  async runTests() {
+    console.log("\n--- idb-connector sql select exec API ---\n");
+    await Functions.runSelectStatementViaExecApi();
+
+    console.log("\n--- idb-connector sql select fetch API ---\n");
+    await Functions.runSelectStatementViaFetchApi();
+
+    console.log("\n--- idb-pconnector sql select prepareExecute API ---\n");
+    await Functions.runSelectStatementWithPromise();
+
+    console.log(
+      "\n--- idb-pconnector stored procedure prepareExecute API ---\n"
+    );
+    await Functions.callStoredProcedureWithPromise();
+  },
 };
 
-//Functions.runSelectStatementWithPromise();
-//Functions.callStoredProcedureWithPromise();
-Functions.runSelectStatementViaExecApi();
-Functions.runSelectStatementViaFetchApi();
+Functions.runTests();
