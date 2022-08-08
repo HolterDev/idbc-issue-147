@@ -8,7 +8,7 @@ declare module "idb-connector" {
     close(): any;
 
     // Native method; no parameter or return type inference available
-    conn(): any;
+    conn(params?: any): any;
 
     // Native method; no parameter or return type inference available
     debug(): any;
@@ -30,7 +30,7 @@ declare module "idb-connector" {
   }
 
   export class dbstmt {
-    constructor();
+    constructor(params?: any);
 
     // Native method; no parameter or return type inference available
     bindParam(): any;
@@ -48,13 +48,13 @@ declare module "idb-connector" {
     commit(): any;
 
     // Native method; no parameter or return type inference available
-    exec(): any;
+    exec(statement: string, callback: any): any;
 
     // Native method; no parameter or return type inference available
     execSync(): any;
 
     // Native method; no parameter or return type inference available
-    execute(): any;
+    execute(callback: any): any;
 
     // Native method; no parameter or return type inference available
     executeSync(): any;
@@ -63,7 +63,7 @@ declare module "idb-connector" {
     fetch(): any;
 
     // Native method; no parameter or return type inference available
-    fetchAll(): any;
+    fetchAll(callback: any): any;
 
     // Native method; no parameter or return type inference available
     fetchAllSync(): any;
@@ -102,7 +102,7 @@ declare module "idb-connector" {
     numRows(): any;
 
     // Native method; no parameter or return type inference available
-    prepare(): any;
+    prepare(statement: string, callback: any): any;
 
     // Native method; no parameter or return type inference available
     prepareSync(): any;

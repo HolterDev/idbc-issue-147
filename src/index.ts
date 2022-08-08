@@ -1,4 +1,6 @@
 import { DBPool } from "idb-pconnector";
+import pkg from "idb-connector";
+const { dbconn, dbstmt } = pkg;
 
 console.log("I run!");
 
@@ -13,6 +15,35 @@ const idbPConnectionPool = new DBPool(
 );
 
 const Functions = {
+  runSelectStatementViaExecApi() {
+    const idbConnection = new dbconn();
+    idbConnection.conn("*LOCAL");
+    const idbStatement = new dbstmt(idbConnection);
+    idbStatement.exec("select companyId, clientId from tissue147", (x: any) => {
+      console.log("statement executed");
+      console.log(JSON.stringify(x));
+      idbStatement.close();
+      idbConnection.disconn();
+      idbConnection.close();
+    });
+  },
+
+  runSelectStatementViaFetchApi() {
+    const idbConnection = new dbconn();
+    idbConnection.conn("*LOCAL");
+    const idbStatement = new dbstmt(idbConnection);
+
+    idbStatement.prepare("select companyId, clientId from tissue147", () => {
+      idbStatement.execute(() => {
+        idbStatement.fetchAll((x: any) => {
+          console.log("statement executed");
+          console.log(JSON.stringify(x));
+          idbStatement.close();
+        });
+      });
+    });
+  },
+
   async runSelectStatementWithPromise() {
     await idbPConnectionPool
       .prepareExecute(
@@ -23,7 +54,7 @@ const Functions = {
         }
       )
       .then((result) => {
-        console.log("function executed");
+        console.log("statement executed");
         console.log(result);
       })
       .catch((reason) => {
@@ -58,5 +89,7 @@ const Functions = {
   },
 };
 
-Functions.runSelectStatementWithPromise();
-Functions.callStoredProcedureWithPromise();
+//Functions.runSelectStatementWithPromise();
+//Functions.callStoredProcedureWithPromise();
+Functions.runSelectStatementViaExecApi();
+Functions.runSelectStatementViaFetchApi();
