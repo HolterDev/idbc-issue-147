@@ -6,10 +6,11 @@
   "description": "Prototype for reproducing bug described in idb-connector issue 147",
   "main": "src/index.js",
   "scripts": {
-    "compile-rpg": "system -kbieps \"crtbndrpg pgm(dummy) srcstmf('\"$(pwd)\"/src/rpg/dummy.rpgle') replace(*no) usrprf(*owner) optimize(*none) dbgview(*all) option(*xref *showcpy *expdds *ext *showskp *srcstmt *unref *eventf)\"",
-    "compile-rpg-sql": "system -kbiep \"runsqlstm srcstmf('\"$(pwd)\"/src/sql/dummy.sql')\"",
+    "compile-rpg": "system -kbieps \"crtbndrpg pgm(PISSUE147) srcstmf('\"$(pwd)\"/src/rpg/pissue147.rpgle') replace(*no) usrprf(*owner) optimize(*none) dbgview(*all) option(*xref *showcpy *expdds *ext *showskp *srcstmt *unref *eventf)\"",
+    "compile-rpg-sql": "system -kbieps \"runsqlstm srcstmf('\"$(pwd)\"/src/sql/pissue147.sql')\"",
+    "create-sql-table": "system -kbieps \"runsqlstm srcstmf('\"$(pwd)\"/src/sql/tissue147.sql')\"",
     "compile-ts": "tsc",
-    "compile": "npm run compile-rpg && npm run compile-rpg-sql && npm run compile-ts",
+    "compile": "npm run compile-rpg && npm run compile-rpg-sql && npm run create-sql-table && npm run compile-ts",
     "index": "node out/index.js",
     "setup": "npm i && npm run compile",
     "start": "npm run index"
