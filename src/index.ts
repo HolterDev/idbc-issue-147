@@ -53,6 +53,75 @@ const Functions = {
     });
   },
 
+  async callStoredProcedureViaIdbConnector() {
+    return new Promise<void>(async (resolve) => {
+      const idbConnection = new dbconn();
+      idbConnection.conn("*LOCAL");
+      const idbStatement = new dbstmt(idbConnection);
+
+      idbStatement.prepare("call PISSUE147(?, ?, ?, ?, ?)", () => {
+        idbStatement.bindParameters(
+          [
+            "XGETCOLIN",
+            0,
+            "",
+            0,
+            "<?xml version='1.0' encoding='ISO-8859-1'?><snd><data><companyid>0</companyid></data></snd>",
+          ],
+          () => {
+            idbStatement.execute((out: any) => {
+              console.log("function called");
+              for (const value of out) {
+                console.log(value);
+              }
+              idbStatement.close();
+              idbConnection.disconn();
+              idbConnection.close();
+              resolve();
+            });
+          }
+        );
+      });
+    });
+  },
+
+  async callStoredProcedureViaIdbConnectorWithDeprecatedInterface() {
+    return new Promise<void>(async (resolve) => {
+      const idbConnection = new dbconn();
+      idbConnection.conn("*LOCAL");
+      const idbStatement = new dbstmt(idbConnection);
+
+      idbStatement.prepare("call PISSUE147(?, ?, ?, ?, ?)", () => {
+        idbStatement.bindParam(
+          [
+            "XGETCOLIN",
+            0,
+            "",
+            0,
+            "<?xml version='1.0' encoding='ISO-8859-1'?><snd><data><companyid>0</companyid></data></snd>",
+          ],
+          (error: any) => {
+            if (error) {
+              console.log("error with bindParam");
+              console.log(error);
+            }
+
+            idbStatement.execute((out: any) => {
+              console.log("function called");
+              for (const value of out) {
+                console.log(value);
+              }
+              idbStatement.close();
+              idbConnection.disconn();
+              idbConnection.close();
+              resolve();
+            });
+          }
+        );
+      });
+    });
+  },
+
   async runSelectStatementWithPromise() {
     await idbPConnectionPool
       .prepareExecute(
@@ -103,6 +172,15 @@ const Functions = {
 
     console.log("\n--- idb-connector sql select fetch API ---\n");
     await Functions.runSelectStatementViaFetchApi();
+
+    console.log(
+      "\n--- idb-connector stored procedure prepare + bindParameters API ---\n"
+    );
+    await Functions.callStoredProcedureViaIdbConnector();
+    console.log(
+      "\n--- idb-connector stored procedure prepare + deprecated bindParam API ---\n"
+    );
+    await Functions.callStoredProcedureViaIdbConnectorWithDeprecatedInterface();
 
     console.log("\n--- idb-pconnector sql select prepareExecute API ---\n");
     await Functions.runSelectStatementWithPromise();

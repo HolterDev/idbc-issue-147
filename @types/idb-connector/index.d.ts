@@ -33,7 +33,9 @@ declare module "idb-connector" {
     constructor(params?: any);
 
     // Native method; no parameter or return type inference available
-    bindParam(): any;
+    bindParam(parameterList: any, callback: any): any;
+
+    bindParameters(parameterList: any, callback: any): any;
 
     // Native method; no parameter or return type inference available
     bindParamSync(): any;
