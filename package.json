@@ -1,0 +1,24 @@
+{
+  "name": "idbc-issue-147",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Prototype for reproducing bug described in idb-connector issue 147",
+  "main": "src/index.js",
+  "scripts": {
+    "compile-rpg": "system -kbieps \"crtbndrpg pgm(dummy) srcstmf('\"$(pwd)\"/src/rpg/dummy.rpgle') replace(*no) usrprf(*owner) optimize(*none) dbgview(*all) option(*xref *showcpy *expdds *ext *showskp *srcstmt *unref *eventf)\"",
+    "compile-rpg-sql": "system -kbiep \"runsqlstm srcstmf('\"$(pwd)\"/src/sql/dummy.sql')\"",
+    "compile-ts": "tsc",
+    "compile": "npm run compile-rpg && npm run compile-rpg-sql && npm run compile-ts",
+    "index": "node out/index.js",
+    "setup": "npm i && npm run compile",
+    "start": "npm run index"
+  },
+  "dependencies": {
+    "idb-pconnector": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.34",
+    "typescript": "^4.6.4"
+  }
+}
